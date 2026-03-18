@@ -1,0 +1,179 @@
+DFAM : Multiple alignment and profile HMMs of repetitive DNA                                            
+                        RELEASE 1.2
+           --------------------------------------
+
+1. INTRODUCTION
+
+  Dfam is a collection of conserved DNA element sequence alignments,
+  hidden Markov models (HMMs) and matches lists for complete genomes. This
+  first release focuses on models for Human, but the list of genomes and           
+  models will expand rapidly.
+
+2. LOCATIONS
+
+  Dfam is available on the web at:
+
+    http://dfam.janelia.org/
+
+3. STATISTICS
+
+  Dfam 1.2 consists of 1132 models that match 50% (bal bp) of the Human genome.
+
+4. CONSTRUCTION OF DFAM
+
+  Dfam is based on a fixed sequence database called Dfamseq - Dfamseq 1.0 is
+  currently just the Human genome, (GRC37.p7, downloaded from
+  http://www.ensembl.org) containing 3102 Mb of DNA.
+
+  Sequence alignments for human interspersed repeat families were built using
+  annotation on the UCSC genome browser (http://http://genome.ucsc.edu/,
+  Human build hg19), which itself depends on annotation software RepeatMasker
+  (http://http://www.repeatmasker.org/) and the database of repeat consensus
+  sequences, RepBase (http://www.girinst.org/repbase/). For each family,
+  annotated instances were transitively aligned based on mutual alignment to
+  the Repbase consensus sequence.
+
+  Hidden Markov models (HMMs) were constructed from the sequence alignment
+  using the HMMER3 tool hmmbuild, and each model was then searched against
+  Dfamseq using a beta version of the HMMER3 tool nhmmer, with hit metadata
+  (sequence location, score, etc) captured for distribution.
+
+  Note: We are currently using a pre-release of HMMER 3.1. The source code 
+  for this snapshot is available for the Dfam FTP site.
+
+5. DESCRIPTION OF CHANGES FROM RELEASE 1.1 to 1.2
+
+  1. Increased sensitivity (via lowered GA thresholds) MIR and the L2s,
+     leading to ~10Mb of additional coverage of the human genome.
+  2. Updated/improved descriptions of many models.
+  3. New plot ("Non-Redundant Coverage, Conservation, and Inserts") showing
+     the fraction of hits covering each position of the model, and 
+     per-position sequence identity and insertion rate based on those hits.  
+  4. Improved Relationships tab ("Overlapping Entries"), enabling related 
+     models to be sorted by name, percent identity, match e-value, and
+     percent shared coverage.
+
+
+6. FUTURE FORMAT CHANGES
+
+  No major changes for the format of the flatfile planned for next
+  release.
+
+
+7. DESCRIPTION OF RELEASE FILES
+
+  relnotes.txt       - This file.
+  userman.txt        - A fuller description of Dfam fields.
+  Dfam.hmm           - Dfam HMMs in an HMM library, searchable with the nhmmer program.
+  Dfam.seed          - Annotation and seed alignments of all Dfam entires in Stockholm format.
+  Dfam.hits          - TSV list of all matches from dfamseq that score above the GA threshold.
+  diff               - A list of files for each entry that have changed since the last release.
+  dfamseq            - The underlying sequence database in fasta format.
+  hmmer.src          - The source code of the current beta version of nhmmer used to make this
+                       release.
+
+8. DESCRIPTION OF FIELDS
+  
+  See userman.txt for more detailed description of each field
+ 
+
+  Compulsory fields:
+  ------------------
+
+  AC   Accession number:           Accession number in form DFxxxxxxx.
+  ID   Identification:             One word name for entry.
+  DE   Definition:                 Short description of entry.
+  AU   Author:                     Authors of the entry.
+  SE   Source of seed:             The source suggesting the seed members belong to one entry.
+  GA   Gathering method:           Score used for sequences within the clade specified by MS.
+  TC   Trusted Cutoff:             Score used for sequences outside the clade specified by MS.
+  NC   Noise Cutoff:               Smaller cutoff than GA; not used in Dfam.
+  FR   False Discovery Rate:       Target FDR used to set GA.
+  BM   Build method
+  SM   Internal search method
+  MS   Model specificity:          TaxID and TaxName, based on NCBI taxonomy.
+  CT   Classification tags:        Repeat Type, Class, and Superfamily.
+  SQ   Sequence:                   Number of sequences in alignment.
+  //                               End of alignment.
+
+  Optional fields:
+  ----------------
+
+  DC   Database Comment:           Comment about database reference.
+  DR   Database Reference:         Reference to external database.
+  RC   Reference Comment:          Comment about literature reference.
+  RN   Reference Number:           Reference Number.
+  RM   Reference Medline:          Eight digit medline UI number.
+  RT   Reference Title:            Reference Title.
+  RA   Reference Author:           Reference Author
+  RL   Reference Location:         Journal location.
+  PI   Previous identifier:        Record of all previous ID lines.
+  CC   Comment:                    Comments.
+  WK   Wikipedia Reference:        Reference to wikipedia.
+  SN   Synonym                     A widely accepted alternative name for the model.
+  CN   Classification Note:        A free text comment about the model classification.
+
+
+9. REFERENCES
+
+  Papers on Dfam are listed below:
+
+  Dfam: a Database of Repetitive DNA Based on Profile Hidden Markov Models    
+  Wheeler TJ, Clements J, Eddy SR, Hubley R, Jones TA, Jurka J, Smit AFA, Finn RD
+  NAR, submitted
+
+10. THE DFAM CONSORTIUM
+
+  Dfam is maintained by a consortium of researchers. You can contact
+  the Dfam consortium at:
+      dfam  "at"  janelia.hhmi.org
+
+  The current members of the Dfam consortium are:
+  Robert D. Finn, Jody Clements, Sean R. Eddy, Thomas A. Jones, Travis J.
+  Wheeler: Janelia Farm Research Campus, USA
+  Arian F. A. Smit, Robert Hubley: Institute for Systems Biology, USA
+  Jerzy Jurka: Genetic Information Research Institute, USA
+ 
+
+11. ACKNOWLEDGEMENTS
+  
+  R.D.F., J.C, S.R.E, T.A.J., and T.J.W received institutional support from
+  HHMI Janelia Farm Research Campus. J.J. was supported by grants from the
+  National Library of Medicine, National Institutes of Health
+  (P41LM006252-12). A.F.A.S and R.H were supported by a
+  grant from the National Institutes of Health (RO1 HG002939).
+
+12. COPYRIGHT NOTICE
+
+  Dfam - A database of conserved DNA element alignments and HMMs
+  Copyright (C) 2012 The Dfam consortium.
+
+  This database is free; you can redistribute it and/or modify it
+  as you wish, under the terms of the CC0 1.0 license, a
+  'no copyright' license:
+
+  The Dfam consortium has dedicated the work to the public domain, waiving
+  all rights to the work worldwide under copyright law, including all related
+  and neighboring rights, to the extent allowed by law.
+
+  You can copy, modify, distribute and perform the work, even for commercial
+  purposes, all without asking permission. See Other Information below.
+                               
+
+  Other Information
+
+  o In no way are the patent or trademark rights of any person affected by
+    CC0, nor are the rights that other persons may have in the work or in how
+    the work is used, such as publicity or privacy rights.
+  o Unless expressly stated otherwise, the Dfam consortium makes no
+    warranties about the work, and disclaims liability for all uses of the
+    work, to the fullest extent permitted by applicable law.
+  o When using or citing the work, you should not imply endorsement by the  
+    Dfam consortium.
+
+  You may also obtain a copy of the CC0 license here:
+  http://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+___________________
+The Dfam Consortium
+2013

@@ -1,0 +1,452 @@
+             _/_/_/_/      _/_/_/_/_/     _/_/_/       _/     _/
+           _/      _/    _/           _/      _/     _/_/  _/_/ 
+          _/      _/    _/           _/      _/     _/  _/  _/  
+         _/      _/    _/_/_/_/     _/_/_/_/_/     _/      _/   
+        _/      _/    _/           _/      _/     _/      _/    
+       _/      _/    _/           _/      _/     _/      _/     
+      _/_/_/_/      _/           _/      _/     _/      _/      
+
+
+
+ This document currently includes a detailed description of the
+ fields used in the Dfam flatfiles, Dfam.seed, Dfam.hmm, Dfam.hits
+ and dfamseq.
+
+Dfam.seed
+=========
+
+Dfam.seed file is composed of five sections shown in the figure below.
+
+
+                __________________________________
+                |                                |
+                |        Header Section          |
+                |                                |
+                |________________________________|
+                |                                |
+                |     Classification Section     |
+                |                                |
+                |________________________________|
+                |                                |
+                |       Reference Section        |
+                |                                |
+                |________________________________|
+                |                                |
+                |        Comment Section         |
+                |                                |
+                |________________________________|
+                |                                |
+                |     SEED alignment Section     |
+                |                                |
+                |________________________________|
+
+
+
+
+ Header Section:
+ ---------------
+
+ The header section mainly contains compulsory fields.  These include
+ Dfam specific information such as accession numbers and identifiers,
+ as well as a short description of the model.  The only
+ non-compulsory fields in the header section are the PI and SN field.
+ All the fields in this section are described below.
+
+ AC   Accession number:          DFxxxxxxx
+
+      The Dfam accession numbers DFxxxxxxx are the stable identifier
+      for each Dfam model.  
+
+ ID   Identification:            15 characters or less
+
+      This field is designed to be a meaningful identifier for the
+      model.
+
+      Capitalisation of the first letter will be
+      preferred. Underscores are used in place of space, and hyphens
+      are only used to mean hyphens.
+
+ DE   Definition:                75 characters or less  
+
+      This must be a one line description of the Dfam entry.
+
+
+ AU   Author:
+
+      Author(s) of the entry.
+
+      The format for this record is shown below, this is a comma
+      separated list on a single line.
+
+      AU   Bloggs JJ, Bloggs JE
+
+ BM   HMM building command lines.  
+
+      See the HMMER3 user's manual for full instructions on building
+      HMMs. Also see URL:
+
+      http://hmmer.janelia.org
+
+      An example of the BM lines from a single entry
+
+      BM   hmmbuild --hand --maxinsertlen 10 -o /dev/null HMM SEED
+
+ SM   HMM searching command line
+
+      Search is performed using a beta version of nhmmer, based on
+      the HMMER3 suite of homology search tools. Documentation for
+      nhmmer is in development; for now the two primary sources of
+      guidance should come from (1) running ‘nhmmer -h’ and (2)
+      reading the HMMER3 user’s manual for instructions on using
+      hmmsearch, which is most similar in functionality to nhmmer.
+
+      An example of the SM line for a family:
+
+      SM   nhmmer -Z 3102 -E 1 HMM dfamseq.mask
+
+ SE   Source of seed:    
+
+      The source suggesting seed members belong to a family.
+
+ GA   Gathering threshold:   
+
+      Search threshold for generating the matches to the model
+      when masking a genome for repetitive elements, when that
+      genome agrees with the model specificity field.
+
+      GA lines are the thresholds in bits used when running nhmmer
+      on the command line.  An example GA line is shown below:
+
+      GA   25.00;
+
+      The corresponding nhmmer command line for the HMM would be:
+
+      nhmmer -T 25 HMM DB
+
+      The -T option specifies the whole sequence score in bits.
+
+
+      A warning: the GA value is typically the lowest bit score
+      that retains a false discovery rate (FDR) <= 0.1%
+      (using the larger of the values suggested by empirical and
+      theoretical FDR estimates - empirical FDR considers false
+      matches as those found in a search against a reversed
+      simple-repeat-masked copy of target genomic sequence, and
+      determined to not be self-reversed matches). As an example,
+      if there are 1000 true instances of a family in a genome,
+      then the GA will likely be set to the score required for an
+      E-value of 1 - we expect one match with score above GA to
+      be a false positive.
+
+      Because of this, GA should only be used when masking
+      sequence from an organism within the clade specified by
+      the model specificity (MS) field. If GA is used to
+      annotate an organism outside this clade, the risk of false
+      positives is high. For example, odds are good that at
+      least one above-GA match to Alu, a primate-specific repeat,
+      will be found in any organism with gigabase sized genome.
+      Finding such a match does *not* mean you’ve shown that Alus
+      appear outside of primates.
+
+ NC   Noise cutoff:
+
+      This field refers to the bit scores at which a match is deemed
+      not significant. It will be less than GA.
+
+      An example NC line is shown below
+
+      NC   19.50;
+
+
+ TC   Trusted cutoff:
+
+      This field refers to the bit score of the lowest scoring match
+      at which no false positives are detected or corresponding to an
+      E-value of 0.001, whichever is greater. This threshold should be
+      used when trying to conservatively annotate repetitive elements in
+      a genome.
+
+      An example TC line is shown below
+
+      TC   33.00;
+
+ FR   False discovery rate:
+
+      This field refers to the false discovery rate (FR) that is used to set
+      the GA threshold.  The FR is the expected portion of significant
+      matches that are expected to be false positives; for example, if 1000
+      hits were detected and the model was build with FR of 0.001, then
+      1 of the hits would be expected to be a false positives.
+
+      Note that for a fixed score threshold, the number of false positives
+      in two like-sized genomes is expected to be about the same, but the
+      number of true matches might be very different, resulting in different
+      false discovery rates. Thus, an FDR of 0.001 on the organism specified
+      in the MS field does not ensure a similar FDR for all other organisms.
+ MS   Model specificity field:              
+
+      Indicates the clade for which the GA (gathering threshold) score may
+      be used as a masking threshold, with reasonable expected false
+      discovery rate. Clade Id and Name depend on NCBI taxonomy.
+
+      An example line is shown below:
+
+      TaxId:9606; TaxName:Homo sapiens;
+
+ PI   Previous IDs:               Semi-colon list
+
+     The most recent names are stored on the left.  This field is
+     non-compulsory.
+
+ SN    Synonym:
+
+    Other names that have been assigned to this family, perhaps in
+      other databases.  This field is non-compulsory.
+
+
+ Classification Section:
+ -----------------------
+
+ CT
+      Provides rudimentary placement of a family in the repeat
+      hierarchy. Three levels of hierarchy are given:
+        - Type  (e.g. DNA Transposon, Retrotransposon)
+        - Class (e.g. LINE, SINE, LTR, Rolling Circle)
+        - Superfamily (e.g. L1, ERV1, Alu)
+
+      An example collection of CT lines is shown below:
+
+      CT   Type; DNA Transposon;
+      CT   Class; Cut and Paste;
+      CT   Superfamily; hAT-Tip100;
+
+
+
+ Reference Section:
+ ------------------
+
+ The reference section mainly contains cross-links to other
+ databases, and literature references.  All the fields in this
+ section are described below.
+
+
+ WK   Wikipedia Reference:        A special database reference for wikipedia.
+
+      This is the name of the wikipedia article.  All of the articles
+      we cite are from the English version of wikipedia.  Therefore
+      the name needs to be appended to http://en.wikipedia.org/wiki/.
+      For example:
+
+      KW   Alu_sequence;
+
+      Thus, the corresponding page in wikipedia would be
+      http://en.wikipedia.org/wiki/Alu_sequence.
+
+ DC   Database Comment:           Comment for database reference.
+
+ DR   Database Reference:         Reference to external database.
+
+      All DR lines end in a semicolon.  Dfam carries links to a
+      variety of databases, this information is found in DR lines.
+      The format is
+
+      DR   Database; Primary-id;
+  
+      Examples:
+
+      DR   Repbase; CHARLIE1;
+      DR   Rfam; RF00017;
+      DR   EXPERT; name@domain.edu;
+    DR   URL; http://www.domain.edu/;
+
+ RC   Reference Comment:          
+
+      Comment for literature reference.
+
+ RN   Reference Number:           Digit in square brackets
+
+      Reference numbers are used to precede literature references,
+      which have multiple line entries
+
+      RN   [1]
+
+ RM   Reference Medline:          Eight digit number
+
+      An example RM line is shown below
+
+      RM   91006031
+
+      The number can be found as the UI number in pubmed
+      http://www.ncbi.nlm.nih.gov/PubMed/
+
+ RT   Reference Title:                    
+
+      Title of paper.
+
+ RA   Reference Author:
+
+      All RA lines use the following format
+
+      RA   Jurka J, Milosavljevic A;
+
+ RL   Reference Location:
+
+      The reference line is in the format below.
+      RL  Journal abbreviation year;volume:page-page.
+
+      RL   J Mol Evol 1991;32:105-121.
+      RL   Nucleic Acids Res 1992;20:487-493.
+
+      Journal abbreviations can be checked at
+      http://expasy.hcuge.ch/cgi-bin/jourlist?jourlist.txt. Journal
+      abbreviation have no full stops, and page numbers are not
+      abbreviated.
+
+
+ Comment Section:
+ ----------------
+
+ The comment section contains information about the Dfam entry.  
+ The only field in the comment section is the CC field.
+
+ CC   Comment:
+
+      Comment lines provide annotation and other information.
+      Annotation in CC lines does not have a strict format.
+
+      Links to Dfam families can be provided with the following
+      syntax:
+
+      Dfam:DFxxxxxxx.
+
+
+
+ Alignment Section:
+ ------------------
+
+ SQ   Sequence:               Number of sequences, start of alignment.
+
+ //                           End of alignment
+
+ The alignment is in Stockholm format.  This includes mark-ups of four
+ types:
+
+    #=GF <featurename> <Generic per-File annotation, free text>
+    #=GC <featurename> <Generic per-Column annotation, exactly 1 char per column>
+    #=GS <seqname> <featurename> <Generic per-Sequence annotation, free text>
+    #=GR <seqname> <featurename> <Generic per-Sequence AND per-Column mark up, exactly 1 char per column>
+
+ Recommended placements:
+
+    #=GF Above the alignment
+    #=GC Below the alignment
+    #=GS Above the alignment or just below the corresponding sequence
+    #=GR Just below the corresponding sequence
+
+ These details can also be found on the web, see URL:
+
+    http://sonnhammer.sbc.su.se/Stockholm.html
+    http://en.wikipedia.org/wiki/Stockholm_format
+
+The following Stockholm format lines may appear in the seed alignments.
+
+RF lines - this indicates the columns (prefix #=GC) in the seed alignment that 
+correspond to positions (match states) in the profile HMM.
+
+MM lines - In some cases there are positions in the profile HMM that are 
+masked due to the sequence composition attracting many false positives. Model 
+masking sets the emission probabilities to match the background distribution, 
+which neither rewards nor penalizes a sequence aligned to a masked region.  
+This line indicates the position of such regions in the seed alignment, 
+(prefix #=GC). The absence of the line means that there is no model masking 
+for this entry.
+
+
+Dfam.hmm
+========
+
+The concatenated set of Dfam profile HMMs.  This should be used in concert 
+with nhmmer to search query sequences. This file has a ‘header’ section, which 
+contains the copyright and version information. Each HMM contains the standard 
+text HMM fields, such NAME, ACC etc. See the hmmer documenation 
+(http://hmmer.janelia.org) for more information. There are some additional field 
+such as the classification tags (prefixed CT and described above), model 
+specificity (MS) and CC lines that contain RepeatMasker specific information. If 
+many searches are to be performed using the Dfam.hmm file, we suggest that you 
+use hmmpress to convert it to a binary format.
+
+
+Dfam.hits
+=========
+Dfam.hits file contains a tab separated list of the matches in dfamseq to each 
+of the models contained in Dfam.hmm that score above the GA threshold for the 
+model.  This files contains all hits found by the Dfam HMMs and does not try 
+and resolve overlaps between related models. The fields in that file are as 
+follows:
+
+Dfamseq identifier   - Constructed from organism name, chromosome (or NC for 
+                       unplaced contigs), sequence number.
+
+Dfam accession       - i.e. DFXXXXXXX, use this to link on.
+
+Dfam identifier      - 16 character name for the entry.
+
+bit score            - The score of the match
+
+E-value              - Estimate of the statistical significance of this match in 
+                       context of the the size of dfamseq.
+
+'-'                  - This is here to keep file formats between nhmmer and 
+                       dfam_scan.pl consistent, where this is set to the 
+                       bais composition.
+
+model start          - The first position matched in the model by the hit.
+
+model end            - The last position matched in the model by the hit.
+
+model length         - The model length.
+
+strand               - Either '+' or '-'.
+
+alignment start      - The position of the first base in the alignment between 
+                       the hit and the model.
+
+alignment end        - The start position of the first base in the alignment 
+                       between the hit and the model.
+
+envelope start       - The start position of the sequence that defines a 
+                       subsequence for which there is substantial probability mass 
+                       supporting a homologous hit.  See the HMMER documentation for
+                       further information on HMM envelopes.
+
+envelope end         - The end position of the sequence that defines a subsequence 
+                       for which there is substantial probability mass supporting 
+                       a homologous hit.
+
+sequence length      - The length of the sequence containing the match.
+
+sequence description - Free text description of the DNA sequence.
+
+Dfam description     - Brief description of the Dfam entry.
+
+
+dfamseq
+=======
+ Our stable sequence data that has been searched by each Dfam entry.  Dfamseq, 
+ a fasta formatted file, contains complete genomes downloaded from Ensembl
+ (http://www.ensembl.org) and masked using TRF using the following command
+ line:
+   trf dfamseq 2 7 7 80 10 70 5
+
+ This list of genomes contained in dfamseq is:
+
+    Homo sapiens
+
+
+trf.regions
+===========
+ Dfamseq is masked using Tandem Repeat Finder (http://tandem.bu.edu/trf/trf.html).
+ This file contains a tab delimited list of the regions that have been masked
+ in dfamseq. The columns in the file are:
+
+Dfamseq identifier, Sequence Start, Sequence End, Repetitive motif. 
