@@ -1,7 +1,7 @@
 # LocaTR
 LocaTR identification pipeline for annotating LTR retrotransposons in any assembled genome.
 
-Please cite: **Mason AS**, Fulton JE, Hocking PM & Burt DW (2016), [A new look at the LTR retrotransposon content of the chicken genome](https://doi.org/10.1186/s12864-016-3043-1), *BMC Genomics*, 17:688.
+**Mason AS**, Fulton JE, Hocking PM & Burt DW (2016), [A new look at the LTR retrotransposon content of the chicken genome](https://doi.org/10.1186/s12864-016-3043-1), *BMC Genomics*, 17:688.
 
 ## 2026/03/18
 Moved repo from old github account (andrewstephenmason) to here (asmasonomics)
